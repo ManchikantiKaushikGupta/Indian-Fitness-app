@@ -1,0 +1,39 @@
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query } from '@nestjs/common';
+import { MemberService } from './member.service';
+import { CreateMemberDto } from './dto/create-member.dto';
+import { UpdateMemberDto } from './dto/update-member.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+
+@UseGuards(JwtAuthGuard)
+@Controller('members')
+export class MemberController {
+  constructor(private readonly memberService: MemberService) {}
+
+  @Post()
+  create(@Body() createMemberDto: CreateMemberDto) {
+    return this.memberService.create(createMemberDto);
+  }
+
+  @Get()
+  findAll(
+    @Query('skip') skip?: string,
+    @Query('take') take?: string,
+  ) {
+    return this.memberService.findAll(skip ? +skip : 0, take ? +take : 10);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.memberService.findOne(+id);
+  }
+
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updateMemberDto: UpdateMemberDto) {
+    return this.memberService.update(+id, updateMemberDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.memberService.remove(+id);
+  }
+}

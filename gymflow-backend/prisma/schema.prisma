@@ -1,0 +1,50 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model gym_owner {
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String   @unique
+  password_hash String
+  created_at    DateTime @default(now())
+}
+
+model members {
+  id           Int           @id @default(autoincrement())
+  name         String
+  phone        String
+  join_date    DateTime      @default(now())
+  gym_id       Int           // In future this would map to a gym model
+  memberships  memberships[]
+  payments     payments[]
+}
+
+model memberships {
+  id         Int      @id @default(autoincrement())
+  member_id  Int
+  member     members  @relation(fields: [member_id], references: [id], onDelete: Cascade)
+  plan_type  String
+  start_date DateTime
+  end_date   DateTime
+  status     String   // "Active", "Expired"
+}
+
+model payments {
+  id         Int       @id @default(autoincrement())
+  member_id  Int
+  member     members   @relation(fields: [member_id], references: [id], onDelete: Cascade)
+  amount     Float
+  due_date   DateTime
+  paid_date  DateTime?
+  status     String    // "PAID", "UNPAID"
+
+  @@index([due_date])
+  @@index([member_id])
+}
