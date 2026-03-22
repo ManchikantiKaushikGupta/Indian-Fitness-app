@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../services/member_service.dart';
 import 'assign_plan_screen.dart'; // We will create this
 import 'record_payment_screen.dart'; // We will create this
+import 'edit_member_screen.dart';
 
 class MemberDetailScreen extends StatefulWidget {
   final int memberId;
@@ -61,6 +62,24 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
       appBar: AppBar(
         title: Text(_member!['name']),
         actions: [
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditMemberScreen(
+                    memberId: widget.memberId,
+                    currentName: _member!['name'],
+                    currentPhone: _member!['phone'],
+                  ),
+                ),
+              );
+              if (result == true) {
+                _fetchData(); // Refresh if updated
+              }
+            },
+          ),
           IconButton(
             icon: Icon(Icons.delete),
             onPressed: () async {
