@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 export class PrismaService extends PrismaClient implements OnModuleInit {
   constructor() {
     super({
-      datasourceUrl: process.env.DATABASE_URL,
+      log: ['error', 'warn'],
     });
   }
 
