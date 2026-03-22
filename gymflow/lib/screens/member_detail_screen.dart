@@ -37,8 +37,8 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
     if (_member == null) return;
     final phone = _member!['phone'];
     final name = _member!['name'];
-    final text = Uri.encodeComponent("Hi \$name, your payment of ₹\$amount is due. Please settle it soon. Thank you!");
-    final url = Uri.parse("https://wa.me/\$phone?text=\$text");
+    final text = Uri.encodeComponent("Hi $name, your payment of ₹$amount is due. Please settle it soon. Thank you!");
+    final url = Uri.parse("https://wa.me/$phone?text=$text");
 
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -95,7 +95,7 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Phone: \${_member!['phone']}", style: TextStyle(fontSize: 18)),
+            Text("Phone: ${_member!['phone']}", style: TextStyle(fontSize: 18)),
             SizedBox(height: 20),
             Divider(),
             Text('Current Plan', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -104,7 +104,7 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
             else
               ListTile(
                 title: Text(currentPlan['plan_type']),
-                subtitle: Text("Status: \${currentPlan['status']} | Ends: \${currentPlan['end_date'].toString().split('T')[0]}"),
+                subtitle: Text("Status: ${currentPlan['status']} | Ends: ${currentPlan['end_date'].toString().split('T')[0]}"),
                 trailing: currentPlan['status'] == 'Active' ? Icon(Icons.check_circle, color: Colors.green) : Icon(Icons.cancel, color: Colors.red),
               ),
             ElevatedButton(
@@ -117,8 +117,8 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
             ...payments.map((p) {
               bool isUnpaid = p['status'] == 'UNPAID';
               return ListTile(
-                title: Text("₹\${p['amount']}"),
-                subtitle: Text("Due: \${p['due_date'].toString().split('T')[0]}"),
+                title: Text("₹${p['amount']}"),
+                subtitle: Text("Due: ${p['due_date'].toString().split('T')[0]}"),
                 trailing: isUnpaid
                     ? Row(
                         mainAxisSize: MainAxisSize.min,

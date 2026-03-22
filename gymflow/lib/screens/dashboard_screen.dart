@@ -29,7 +29,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Failed to load summary: \$e');
+      print('Failed to load summary: $e');
       setState(() => _isLoading = false);
     }
   }
@@ -53,7 +53,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Text(title, style: TextStyle(fontSize: 16, color: Colors.grey[700])),
             SizedBox(height: 5),
             Text(
-              '\$value',
+              '$value',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
             )
           ],

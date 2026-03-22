@@ -13,7 +13,7 @@ class PaymentService {
       });
       return true;
     } catch (e) {
-      print('Failed to record payment: \$e');
+      print('Failed to record payment: $e');
       return false;
     }
   }
@@ -23,7 +23,7 @@ class PaymentService {
       final response = await _api.client.get('/payments/unpaid');
       return response.data;
     } catch (e) {
-      print('Failed to get unpaid: \$e');
+      print('Failed to get unpaid: $e');
       return [];
     }
   }

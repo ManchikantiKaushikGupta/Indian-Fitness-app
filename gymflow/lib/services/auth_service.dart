@@ -20,10 +20,10 @@ class AuthService {
       }
       return false;
     } on DioException catch (e) {
-      print('Login error: \${e.response?.data}');
+      print('Login error: ${e.response?.data}');
       return false;
     } catch (e) {
-      print('Unexpected error: \$e');
+      print('Unexpected error: $e');
       return false;
     }
   }

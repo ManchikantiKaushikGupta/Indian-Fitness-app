@@ -9,17 +9,17 @@ class MemberService {
       final response = await _api.client.get('/members');
       return response.data['data'] ?? [];
     } catch (e) {
-      print('Failed to get members: \$e');
+      print('Failed to get members: $e');
       return [];
     }
   }
 
   Future<Map<String, dynamic>?> getMemberDetails(int id) async {
     try {
-      final response = await _api.client.get('/members/\$id');
+      final response = await _api.client.get('/members/$id');
       return response.data;
     } catch (e) {
-      print('Failed to get member: \$e');
+      print('Failed to get member: $e');
       return null;
     }
   }
@@ -29,24 +29,24 @@ class MemberService {
       await _api.client.post('/members', data: {'name': name, 'phone': phone});
       return true;
     } catch (e) {
-      print('Failed to add member: \$e');
+      print('Failed to add member: $e');
       return false;
     }
   }
 
   Future<bool> updateMember(int id, String name, String phone) async {
     try {
-      await _api.client.put('/members/\$id', data: {'name': name, 'phone': phone});
+      await _api.client.put('/members/$id', data: {'name': name, 'phone': phone});
       return true;
     } catch (e) {
-      print('Failed to update member: \$e');
+      print('Failed to update member: $e');
       return false;
     }
   }
 
   Future<bool> deleteMember(int id) async {
     try {
-      await _api.client.delete('/members/\$id');
+      await _api.client.delete('/members/$id');
       return true;
     } catch (e) {
       return false;

@@ -28,8 +28,8 @@ class _UnpaidScreenState extends State<UnpaidScreen> {
   }
 
   void _sendReminder(String name, String phone, double amount) async {
-    final text = Uri.encodeComponent("Hi \$name, your GymFlow payment of ₹\$amount is due. Kindly pay at the earliest.");
-    final url = Uri.parse("https://wa.me/\$phone?text=\$text");
+    final text = Uri.encodeComponent("Hi $name, your GymFlow payment of ₹$amount is due. Kindly pay at the earliest.");
+    final url = Uri.parse("https://wa.me/$phone?text=$text");
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } else {
@@ -56,7 +56,7 @@ class _UnpaidScreenState extends State<UnpaidScreen> {
                       child: ListTile(
                         leading: Icon(Icons.warning, color: Colors.red),
                         title: Text(memberName, style: TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text("Due: ₹\${p['amount']} | Date: \${p['due_date'].split('T')[0]}"),
+                        subtitle: Text("Due: ₹${p['amount']} | Date: ${p['due_date'].split('T')[0]}"),
                         trailing: ElevatedButton.icon(
                           icon: Icon(Icons.chat, size: 16),
                           label: Text('Remind'),
