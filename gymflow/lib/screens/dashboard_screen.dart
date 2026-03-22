@@ -24,18 +24,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _fetchSummary() async {
     try {
       final response = await _apiService.client.get('/dashboard/summary');
-      setState(() {
+      if (!mounted) return; setState(() {
         _summary = response.data;
         _isLoading = false;
       });
     } catch (e) {
       print('Failed to load summary: $e');
-      setState(() => _isLoading = false);
+      if (!mounted) return; setState(() => _isLoading = false);
     }
   }
 
   void _logout() async {
     await AuthService().logout();
+    if (!mounted) return;
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => LoginScreen()));
   }
 

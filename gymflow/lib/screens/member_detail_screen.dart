@@ -25,9 +25,9 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
   }
 
   void _fetchData() async {
-    setState(() => _isLoading = true);
+    if (!mounted) return; setState(() => _isLoading = true);
     final data = await _memberService.getMemberDetails(widget.memberId);
-    setState(() {
+    if (!mounted) return; setState(() {
       _member = data;
       _isLoading = false;
     });
@@ -43,6 +43,7 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not open WhatsApp.')));
     }
   }
@@ -85,6 +86,7 @@ class _MemberDetailScreenState extends State<MemberDetailScreen> {
             onPressed: () async {
               // MVP Delete confirm
               await _memberService.deleteMember(widget.memberId);
+              if (!mounted) return;
               Navigator.pop(context);
             },
           )

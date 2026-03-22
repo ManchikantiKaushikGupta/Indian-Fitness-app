@@ -14,7 +14,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
 
   void _login() async {
-    setState(() {
+    if (!mounted) return; setState(() {
       _isLoading = true;
     });
 
@@ -23,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _passwordController.text.trim(),
     );
 
-    setState(() {
+    if (!mounted) return; setState(() {
       _isLoading = false;
     });
 

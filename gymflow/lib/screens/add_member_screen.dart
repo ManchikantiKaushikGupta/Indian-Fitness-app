@@ -15,12 +15,12 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
   void _saveMember() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isLoading = true);
+    if (!mounted) return; setState(() => _isLoading = true);
     final success = await MemberService().addMember(
       _nameController.text.trim(),
       _phoneController.text.trim(),
     );
-    setState(() => _isLoading = false);
+    if (!mounted) return; setState(() => _isLoading = false);
 
     if (success) {
       Navigator.pop(context, true);

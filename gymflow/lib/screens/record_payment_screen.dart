@@ -17,7 +17,7 @@ class _RecordPaymentScreenState extends State<RecordPaymentScreen> {
 
   void _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() => _isLoading = true);
+    if (!mounted) return; setState(() => _isLoading = true);
 
     bool success = await PaymentService().recordPayment(
       widget.memberId,
@@ -26,7 +26,7 @@ class _RecordPaymentScreenState extends State<RecordPaymentScreen> {
       _status
     );
 
-    setState(() => _isLoading = false);
+    if (!mounted) return; setState(() => _isLoading = false);
     if (success) {
       Navigator.pop(context, true);
     } else {

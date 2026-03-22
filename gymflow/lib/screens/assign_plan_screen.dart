@@ -15,7 +15,7 @@ class _AssignPlanScreenState extends State<AssignPlanScreen> {
   bool _isLoading = false;
 
   void _submit() async {
-    setState(() => _isLoading = true);
+    if (!mounted) return; setState(() => _isLoading = true);
     final now = DateTime.now();
     DateTime end;
     if (_selectedPlan == 'Monthly') end = DateTime(now.year, now.month + 1, now.day);
@@ -29,7 +29,7 @@ class _AssignPlanScreenState extends State<AssignPlanScreen> {
       end.toIso8601String()
     );
 
-    setState(() => _isLoading = false);
+    if (!mounted) return; setState(() => _isLoading = false);
     if (success) {
       Navigator.pop(context, true);
     } else {

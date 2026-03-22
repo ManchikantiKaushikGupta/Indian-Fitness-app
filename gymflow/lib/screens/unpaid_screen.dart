@@ -19,9 +19,9 @@ class _UnpaidScreenState extends State<UnpaidScreen> {
   }
 
   Future<void> _fetchUnpaid() async {
-    setState(() => _isLoading = true);
+    if (!mounted) return; setState(() => _isLoading = true);
     final data = await _paymentService.getUnpaid();
-    setState(() {
+    if (!mounted) return; setState(() {
       _unpaid = data;
       _isLoading = false;
     });
@@ -33,6 +33,7 @@ class _UnpaidScreenState extends State<UnpaidScreen> {
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not open WhatsApp.')));
     }
   }

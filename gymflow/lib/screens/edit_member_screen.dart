@@ -29,11 +29,11 @@ class _EditMemberScreenState extends State<EditMemberScreen> {
   void _submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      setState(() => _isLoading = true);
+      if (!mounted) return; setState(() => _isLoading = true);
       
       bool success = await _memberService.updateMember(widget.memberId, _name, _phone);
       
-      setState(() => _isLoading = false);
+      if (!mounted) return; setState(() => _isLoading = false);
       if (success) {
         Navigator.pop(context, true);
       } else {

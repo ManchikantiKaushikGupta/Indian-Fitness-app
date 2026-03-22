@@ -20,9 +20,9 @@ class _MembersScreenState extends State<MembersScreen> {
   }
 
   Future<void> _fetchMembers() async {
-    setState(() => _isLoading = true);
+    if (!mounted) return; setState(() => _isLoading = true);
     final members = await _memberService.getMembers();
-    setState(() {
+    if (!mounted) return; setState(() {
       _members = members;
       _isLoading = false;
     });
