@@ -3,8 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   final Dio _dio = Dio();
-  // Using localhost for Web testing
-  final String baseUrl = 'http://localhost:3000';
+  // Production URL on Render
+  final String baseUrl = 'https://indian-fitness-app.onrender.com';
 
   ApiService() {
     _dio.options.baseUrl = baseUrl;
