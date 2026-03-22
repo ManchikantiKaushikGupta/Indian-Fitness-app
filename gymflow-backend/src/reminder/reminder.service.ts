@@ -1,17 +1,17 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
-import * as twilio from 'twilio';
+import { Twilio } from 'twilio';
 
 @Injectable()
 export class ReminderService {
   private readonly logger = new Logger(ReminderService.name);
-  private readonly twilioClient: twilio.Twilio;
+  private readonly twilioClient: Twilio;
   private readonly fromWhatsAppNumber: string;
 
   constructor(private prisma: PrismaService) {
     if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-      this.twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+      this.twilioClient = new Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
       this.fromWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886'; // Twilio sandbox number
     } else {
       this.logger.warn('Twilio credentials not found. Reminders will only be logged, not sent.');
@@ -106,8 +106,11 @@ export class ReminderService {
 
     const totalDue = member.payments.reduce((sum: number, p: any) => sum + p.amount, 0);
 
-    // In future this will log to a `reminders_log` table
-    this.logger.log(`Manual WhatsApp reminder clicked for ${member.name}. Total Due: ${totalDue}`);
-    return { success: true, message: 'Reminder log recorded', totalDue };
+      const msg = `Hi ${member.name}, your GymFlow payment of Rs.${totalDue} is overdue. Please settle it soon. Thank you!`;
+      await this.sendWhatsAppMessage(member.phone, msg);
+
+      // In future this will log to a `reminders_log` table
+      this.logger.log(`Manual WhatsApp reminder sent to ${member.name}. Total Due: ${totalDue}`);
+      return { success: true, message: 'WhatsApp reminder sent', totalDue };
   }
 }
