@@ -1,12 +1,50 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../prisma/prisma.service';
+import * as twilio from 'twilio';
 
 @Injectable()
 export class ReminderService {
   private readonly logger = new Logger(ReminderService.name);
+  private readonly twilioClient: twilio.Twilio;
+  private readonly fromWhatsAppNumber: string;
 
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {
+    if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+      this.twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+      this.fromWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886'; // Twilio sandbox number
+    } else {
+      this.logger.warn('Twilio credentials not found. Reminders will only be logged, not sent.');
+    }
+  }
+
+  // Helper method to format phone number for Twilio WhatsApp
+  private formatWhatsAppNumber(phone: string): string {
+    // Basic formatting: ensure it has country code if missing (assuming +91 for India)
+    let formattedCode = phone.replace(/[^0-9]/g, '');
+    if (formattedCode.length === 10) {
+      formattedCode = `91${formattedCode}`;
+    }
+    return `whatsapp:+${formattedCode}`;
+  }
+
+  private async sendWhatsAppMessage(toPhone: string, message: string) {
+    if (!this.twilioClient) {
+      this.logger.log(`[DRY RUN] WhatsApp to ${toPhone}: ${message}`);
+      return;
+    }
+    try {
+      const waNumber = this.formatWhatsAppNumber(toPhone);
+      await this.twilioClient.messages.create({
+        body: message,
+        from: this.fromWhatsAppNumber,
+        to: waNumber,
+      });
+      this.logger.log(`Sent WhatsApp reminder to ${waNumber}`);
+    } catch (error) {
+      this.logger.error(`Failed to send WhatsApp to ${toPhone}: ${error.message}`);
+    }
+  }
 
   // Runs every day at 09:00 AM
   @Cron('0 9 * * *')
@@ -43,14 +81,18 @@ export class ReminderService {
     // In a real app with WhatsApp API, this is where you call Twilio/meta API.
     // For MVP, we log the targets for manual action via the Dashboard.
     this.logger.log(`Found ${dueToday.length} payments due today and ${dueInTwoDays.length} due in 2 days.`);
+
+    // Send reminders for those due today
+    for (const p of dueToday) {
+      const msg = `Hi ${p.member.name}, your GymFlow payment of ₹${p.amount} is due TODAY. Please settle it soon. Thank you!`;
+      await this.sendWhatsAppMessage(p.member.phone, msg);
+    }
     
-    // Log them clearly
-    dueToday.forEach((p: any) => {
-      this.logger.log(`Target: ${p.member.name} (${p.member.phone}) | Due Today: ₹${p.amount}`);
-    });
-    dueInTwoDays.forEach((p: any) => {
-      this.logger.log(`Target: ${p.member.name} (${p.member.phone}) | Due in 2 days: ₹${p.amount}`);
-    });
+    // Send reminders for those due in 2 days
+    for (const p of dueInTwoDays) {
+      const msg = `Hi ${p.member.name}, your GymFlow payment of ₹${p.amount} is due in 2 days. Kindly pay at the earliest.`;
+      await this.sendWhatsAppMessage(p.member.phone, msg);
+    }
   }
 
   // Manual Trigger Endpoint Handler
